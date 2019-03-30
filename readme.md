@@ -16,12 +16,12 @@ Numbcube这个项目经历了几次重生，最初开始于2015年，当时的�
 * Stage 5 (功能分化及自动化)- 直播系统分化为用户直播间和官方放映厅，用户直播间由用户自己推流，官方放映厅由用户点播硬盘，后台程序(也是使用nodejs)实时监控并推流，全程实现无人值守。
 
 ### 系统组成
-web前端：用户界面(基于Blade、Layui) 
-web后端：接口(基于laravel)
-流服务器：核心服务器，所有流都推到该服务器(Nginx) 
-后端监控及推流：监控放映厅场次，到时间自动推流(nodejs、FFmpeg) 
-后端弹幕服务器：socketio通信服务器(nodejs) 
-用户推流工具(非必须)：简化用户操作，一键调用FFmpeg推流(C#)
+* web前端：用户界面(基于Blade、Layui) 
+* web后端：接口(基于laravel)
+* 流服务器：核心服务器，所有流都推到该服务器(Nginx) 
+* 后端监控及推流：监控放映厅场次，到时间自动推流(nodejs、FFmpeg) 
+* 后端弹幕服务器：socketio通信服务器(nodejs) 
+* 用户推流工具(非必须)：简化用户操作，一键调用FFmpeg推流(C#)
 
 ### 不足
 1. 部分管理员界面未完成(如用户管理，审核直播间等)
@@ -51,22 +51,22 @@ P.S.本系统所以模块可独立运行，不一定要安装在同一服务器�
 
 
 # 开发建议
-如果服务面向全国，尽量使用cdn或云直播服务 
-推流拉流链接尽量加入鉴权
+* 如果服务面向全国，尽量使用cdn或云直播服务 
+* 推流拉流链接尽量加入鉴权
 
 # 数据库
 数据库表：
-bill - 用户充值消费订单表
-ip_lock - 多次输错密码锁定表
-liveroom - 放映厅表
-movie - 影片表
-notice - 通知私信表
-numbcube_room - 直播间表
-numbcube_temp - 网站配置信息
-numbcube_ticket - 购票信息表
-scene - 场次表
-sms_temp - 手机验证码缓存表
-user_data 用户信息附加表
+* bill - 用户充值消费订单表
+* ip_lock - 多次输错密码锁定表
+* liveroom - 放映厅表
+* movie - 影片表
+* notice - 通知私信表
+* numbcube_room - 直播间表
+* numbcube_temp - 网站配置信息
+* numbcube_ticket - 购票信息表
+* scene - 场次表
+* sms_temp - 手机验证码缓存表
+* user_data 用户信息附加表
 
 # 开源组件
 FFmpeg[https://github.com/FFmpeg/FFmpeg](https://github.com/FFmpeg/FFmpeg)
