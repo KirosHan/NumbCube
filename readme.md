@@ -69,11 +69,11 @@ P.S.本系统所以模块可独立运行，不一定要安装在同一服务器�
 * user_data 用户信息附加表
 
 # 开源组件
-FFmpeg[https://github.com/FFmpeg/FFmpeg](https://github.com/FFmpeg/FFmpeg)
-videojs[https://github.com/videojs/videojs-contrib-hls](https://github.com/videojs/videojs-contrib-hls)
-html弹幕[https://github.com/bestvist/barrage-div](https://github.com/bestvist/barrage-div)
-验证码[https://github.com/vicens/captcha](https://github.com/vicens/captcha)
-阿里云短信[https://github.com/hyperbolaa/Alisms](https://github.com/hyperbolaa/Alisms)
+* FFmpeg[https://github.com/FFmpeg/FFmpeg](https://github.com/FFmpeg/FFmpeg)
+* videojs[https://github.com/videojs/videojs-contrib-hls](https://github.com/videojs/videojs-contrib-hls)
+* html弹幕[https://github.com/bestvist/barrage-div](https://github.com/bestvist/barrage-div)
+* 验证码[https://github.com/vicens/captcha](https://github.com/vicens/captcha)
+* 阿里云短信[https://github.com/hyperbolaa/Alisms](https://github.com/hyperbolaa/Alisms)
 
 # 开源协议
 [Apache License 2.0](https://github.com/KirosHan/NumbCube/blob/master/LICENSE)
