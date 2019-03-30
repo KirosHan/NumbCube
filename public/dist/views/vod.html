@@ -1,0 +1,217 @@
+
+<title>点映电影</title>
+
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-header">点映电影</div>
+        <div class="layui-card-body" pad15>
+
+          <div class="layui-form" lay-filter="LAY-filter-info-form">
+            <script type="text/html" template lay-url="/api/vodmoviedata" lay-done="layui.data.done(d);">
+
+
+              <div class="layui-form-item">
+              <label class="layui-form-label">电影名称</label>
+
+              <div class="layui-input-block">
+                <select name="movieid" lay-verify="required">
+
+                  {{#for (var i=0;i<d.data.moviedata.length;i++){ }}
+                  <option value="{{d.data.moviedata[i].movie_id}}">《{{d.data.moviedata[i].movie_name}}》    -------点映价格:{{d.data.moviedata[i].movie_price}}元 </option>
+
+                  {{#} }}>
+                </select>
+              </div>
+              </div>
+
+              <div class="layui-form-item">
+              <label class="layui-form-label">放映厅</label>
+
+              <div class="layui-input-block">
+                <select name="roomid" lay-verify="required">
+
+                  {{#for (var i=0;i<d.data.roomdata.length;i++){ }}
+                  <option value="{{d.data.roomdata[i].room_id}}">{{d.data.roomdata[i].room_name}}</option>
+
+                  {{#} }}>
+                </select>
+              </div>
+              </div>
+
+              <div class="layui-form-item">
+              <label class="layui-form-label">点映时间</label>
+              <div class="layui-input-block">
+                <input type="text" name="date" id="LAY-component-form-group-date" lay-verify="datetime" placeholder="yyyy-MM-dd HH:mm" autocomplete="off" class="layui-input">
+              </div>
+              </div>
+
+              <div class="layui-form-item">
+              <label class="layui-form-label">场次人数</label>
+
+              <div class="layui-input-block">
+                <select name="maxcount" lay-verify="required">
+                  <option value="5">5人厅</option>
+                  <option value="10">10人厅</option>
+                  <option value="30">30人厅</option>
+                  <option value="50" selected>50人厅</option>
+                  <option value="100">100人厅</option>
+                  <option value="200">200人厅</option>
+                  <option value="500">500人厅</option>
+                  <option value="9999999">无上限大厅</option>
+                </select>
+                <div class="layui-form-mid layui-word-aux">
+                设置最大观众数量(默认为50人)
+                </div>
+              </div>
+              </div>
+
+              <div class="layui-form-item">
+              <label class="layui-form-label">出售票价</label>
+
+              <div class="layui-input-block">
+                <select name="ticketprice" lay-verify="required">
+                  <option value="0">免费</option>
+                  <option value="1">1元</option>
+                  <option value="2">2元</option>
+                  <option value="5">5元</option>
+                  <option value="10">10元</option>
+                  <option value="15">15元</option>
+                  <option value="20">20元</option>
+                  <option value="25">30元</option>
+                  <option value="35">35元</option>
+                  <option value="40">40元</option>
+                  <option value="45">45元</option>
+                  <option value="50">50元</option>
+                  <option value="100">100元</option>
+                  <option value="150">150元</option>
+                  <option value="200">200元</option>
+                  <option value="9999">不允许他人观看</option>
+                </select>
+                <div class="layui-form-mid layui-word-aux">
+                  其他观众付费观看您点映的场次，票价(不包含CDN加速费用)的60%将充入您的账户余额。(后期将开放提现功能)
+                </div>
+              </div>
+              </div>
+
+
+              <div class="layui-form-item">
+              <label class="layui-form-label">匿名点映</label>
+              <div class="layui-input-inline">
+                <input type="checkbox" name="hide" lay-skin="switch" lay-filter="liveswitch" lay-text="开启|关闭">
+                  <div class="layui-form-mid layui-word-aux">
+                    匿名点映时，点映者昵称将不会显示
+                  </div>
+
+              </div>
+              </div>
+
+
+
+
+
+              <div class="layui-form-item">
+              <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="setliveinfo">点播</button>
+              </div>
+              </div>
+
+
+
+            </script>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+  layui.data.done = function(d){
+  layui.use(['form','laydate'], function(){
+    var form = layui.form;
+     form.render(null, 'LAY-filter-info-form'); //渲染该模板下的动态表单
+     var laydate = layui.laydate;
+     laydate.render({
+       elem: '#LAY-component-form-group-date'
+       ,type: 'datetime'
+	,lang: 'cn'
+	,calendar: true
+	,format: 'yyyy-MM-dd HH:mm'
+     });
+  });
+};
+
+
+layui.use(['admin', 'form', 'user', 'laydate'], function(){
+  var $ = layui.$
+  ,setter = layui.setter
+  ,admin = layui.admin
+  ,form = layui.form
+  ,laydate = layui.laydate
+  ,router = layui.router()
+  ,search = router.search;
+
+  form.render();
+
+  laydate.render({
+    elem: '#LAY-component-form-group-date'
+    ,type: 'datetime'
+    ,lang: 'cn'
+    ,calendar: true
+    ,format: 'yyyy-MM-dd HH:mm'
+  });
+
+
+
+  //提交
+  form.on('submit(setliveinfo)', function(obj){
+
+layer.confirm('一旦点映成功信息无法修改，是否立即点映？', function(index){
+    //请求接口
+    admin.req({
+      url: '/api/vod' //实际使用请改成服务端真实接口
+      ,data: obj.field
+      ,done: function(res){
+        //请求成功的提示与跳转
+        layer.msg(res['msg'], {
+          offset: '15px'
+          ,icon: 0
+          ,time: 1000
+        }, function(){
+
+          if(res['data'].feedback==1){
+
+            location.hash = search.redirect ? decodeURIComponent(search.redirect) : '/vod';
+          }
+          else {
+
+          }
+        });
+      }
+      ,success: function(res){
+        if(res['code']==1001)
+        {
+          layer.msg(res['msg'], {
+            offset: '15px'
+            ,icon: 5
+            ,time: 3000
+          });
+        }
+      }
+    });
+
+    layer.close(index);
+    });
+    return false;
+
+  });
+
+
+
+
+});
+</script>

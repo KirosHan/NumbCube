@@ -1,0 +1,45 @@
+.box {
+	background: #262626;
+}
+
+.post .details {
+	background: #212121;
+}
+
+input, 
+textarea {
+	background: #1d1d1d;
+}
+
+input:focus,
+textarea:focus {
+	background: #1d1d1d;
+}
+
+#navigation  {
+	background: #262626;
+}
+
+.frame a .more {
+	background: #000 url(../images/icon-more.png) no-repeat center center;
+}
+
+#comments .message {
+	background: #1d1d1d;
+}
+.main-image {
+	background: #262626;
+}
+
+.header-wrapper,
+.footer-wrapper {
+	background: #262626 !important;
+}
+
+.site-generator-wrapper {
+	background: #1d1d1d;
+}
+
+.mejs-container .mejs-controls {
+	background-color: #1d1d1d;
+}

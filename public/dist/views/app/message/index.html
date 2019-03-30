@@ -1,0 +1,182 @@
+
+<title>消息中心</title>
+
+<div class="layui-card layadmin-header">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a lay-href="">主页</a>
+    <a><cite>消息中心</cite></a>
+  </div>
+</div>
+
+<div class="layui-fluid" id="LAY-app-message">
+  <div class="layui-card">
+    <div class="layui-tab layui-tab-brief">
+      <ul class="layui-tab-title">
+        <li>通知</li>
+        <li>私信</li>
+      </ul>
+      <div class="layui-tab-content">
+        <div class="layui-tab-item layui-show">
+
+          <div class="LAY-app-message-btns" style="margin-bottom: 10px;">
+            <button class="layui-btn layui-btn-primary layui-btn-sm" data-type="notice" data-events="del">删除</button>
+            <button class="layui-btn layui-btn-primary layui-btn-sm" data-type="notice" data-events="ready">标记已读</button>
+            <button class="layui-btn layui-btn-primary layui-btn-sm" data-type="notice" data-events="readyAll">全部已读</button>
+          </div>
+
+          <table id="LAY-app-message-notice" lay-filter="LAY-app-message-notice"></table>
+        </div>
+        <div class="layui-tab-item">
+
+          <div class="LAY-app-message-btns" style="margin-bottom: 10px;">
+            <button class="layui-btn layui-btn-primary layui-btn-sm" data-type="direct" data-events="del">删除</button>
+            <button class="layui-btn layui-btn-primary layui-btn-sm" data-type="direct" data-events="ready">标记已读</button>
+            <button class="layui-btn layui-btn-primary layui-btn-sm" data-type="direct" data-events="readyAll">全部已读</button>
+          </div>
+
+          <table id="LAY-app-message-direct" lay-filter="LAY-app-message-direct"></table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+layui.use(['admin', 'table', 'util'], function(){
+  var $ = layui.$
+  ,admin = layui.admin
+  ,table = layui.table
+  ,element = layui.element;
+
+
+  var DISABLED = 'layui-btn-disabled'
+
+  //区分各选项卡中的表格
+  ,tabs = {
+    notice: {
+      text: '通知'
+      ,id: 'LAY-app-message-notice'
+    }
+    ,direct: {
+      text: '私信'
+      ,id: 'LAY-app-message-direct'
+    }
+  };
+
+  //标题内容模板
+  var tplTitle = function(d){
+    if(d.isread == 0)
+    {
+      return '<span class="layui-badge-dot"></span> <a lay-href="app/message/detail/id='+ d.id +'">'+ d.title;
+    }
+    else
+    {
+      return '<a lay-href="app/message/detail/id='+ d.id +'">'+ d.title;
+    }
+  };
+
+
+
+  //通知
+  table.render({
+    elem: '#LAY-app-message-notice'
+    ,url: '/api/message/notice' //模拟接口
+    ,where: {access_token: layui.data('layuiAdmin').access_token}
+    ,page: true
+    ,cols: [[
+      {type: 'checkbox', fixed: 'left'}
+      ,{field: 'title', title: '标题内容', minWidth: 300, templet: tplTitle}
+      ,{field: 'time', title: '时间', width: 170, templet: '<div>{{ layui.util.timeAgo(d.time) }}</div>'}
+    ]]
+    ,skin: 'line'
+  });
+
+  //私信
+  table.render({
+    elem: '#LAY-app-message-direct'
+    ,url: '/api/message/direct' //模拟接口
+    ,where: {access_token: layui.data('layuiAdmin').access_token}
+    ,page: true
+    ,cols: [[
+      {type: 'checkbox', fixed: 'left'}
+      ,{field: 'title', title: '标题内容', minWidth: 300, templet: tplTitle}
+      ,{field: 'time', title: '时间', width: 170, templet: '<div>{{ layui.util.timeAgo(d.time) }}</div>'}
+    ]]
+    ,skin: 'line'
+  });
+
+  //事件处理
+  var events = {
+    del: function(othis, type){
+      var thisTabs = tabs[type]
+      ,checkStatus = table.checkStatus(thisTabs.id)
+      ,data = checkStatus.data; //获得选中的数据
+      if(data.length === 0) return layer.msg('未选中行');
+
+      layer.confirm('确定删除选中的数据吗？', function(){
+
+        var ids = '';
+        $.each(data,function(key,value){
+        ids+=data[key].id+"|";
+        })
+        ids = ids.substring(0, ids.lastIndexOf('|'));
+        admin.req({
+          url: '/api/message/setdel' //实际使用请改成服务端真实接口
+          ,data: {ids:ids}
+          ,done: function(res){
+            layer.msg(res['msg'], {
+              icon: 1
+            });
+            table.reload(thisTabs.id); //刷新表格
+          }
+        });
+      });
+    }
+    ,ready: function(othis, type){
+      var thisTabs = tabs[type]
+      ,checkStatus = table.checkStatus(thisTabs.id)
+      ,data = checkStatus.data; //获得选中的数据
+      if(data.length === 0) return layer.msg('未选中行');
+
+      var ids = '';
+      $.each(data,function(key,value){
+      ids+=data[key].id+"|";
+    })
+    ids = ids.substring(0, ids.lastIndexOf('|'));
+      admin.req({
+        url: '/api/message/setread' //实际使用请改成服务端真实接口
+        ,data: {ids:ids}
+        ,done: function(res){
+          layer.msg(res['msg'], {
+            icon: 1
+          });
+          table.reload(thisTabs.id); //刷新表格
+        }
+      });
+
+
+    }
+    ,readyAll: function(othis, type){
+      var thisTabs = tabs[type];
+
+      admin.req({
+        url: '/api/message/setreadall' //实际使用请改成服务端真实接口
+        ,data: {ids:"all"}
+        ,done: function(res){
+          layer.msg(res['msg'], {
+            icon: 1
+          });
+          table.reload(thisTabs.id); //刷新表格
+        }
+      });
+    }
+  };
+
+  $('.LAY-app-message-btns .layui-btn').on('click', function(){
+    var othis = $(this)
+    ,thisEvent = othis.data('events')
+    ,type = othis.data('type');
+    events[thisEvent] && events[thisEvent].call(this, othis, type);
+  });
+});
+</script>

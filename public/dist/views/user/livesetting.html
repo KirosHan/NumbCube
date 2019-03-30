@@ -1,0 +1,209 @@
+
+<title>房间设置</title>
+
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-header">房间设置</div>
+        <div class="layui-card-body" pad15>
+
+          <div class="layui-form" lay-filter="LAY-filter-info-form">
+            <script type="text/html" template lay-url="/api/liveinfo" lay-done="layui.data.done(d);">
+
+              <div class="layui-form-item">
+              <label class="layui-form-label">房间号</label>
+              <div class="layui-input-inline">
+                <input type="text" name="roomid" value="{{ d.data.roomid }}" readonly class="layui-input">
+              </div>
+              <div class="layui-form-mid layui-word-aux">
+                <a href="http://www.numbcube.com/live/{{ d.data.roomid}}" target="_Blank">前往房间</a>
+              </div>
+              </div>
+              <div class="layui-form-item">
+              <label class="layui-form-label">房间等级</label>
+              <div class="layui-input-inline">
+                <input type="text" name="roomlevel" value="{{ d.data.roomlevel }}" readonly autocomplete="off" class="layui-input">
+              </div>
+              </div>
+              <div class="layui-form-item">
+              <label class="layui-form-label">房间标题</label>
+              <div class="layui-input-block">
+                <input type="text" name="roomtitle" value="{{ d.data.roomtitle }}" autocomplete="off" class="layui-input">
+              </div>
+              </div>
+              <div class="layui-form-item">
+              <label class="layui-form-label">播放状态</label>
+              <div class="layui-input-inline">
+                <input type="checkbox" name="livestatus" lay-skin="switch" lay-filter="liveswitch" lay-text="开启|关闭">
+                  <div class="layui-form-mid layui-word-aux">
+                    <a href="http://storage.onsigma.com/NumbcubePusher.zip" target="_Blank">点击下载Numbcube影片推流工具</a>
+                  </div>
+
+              </div>
+              </div>
+              <div class="layui-form-item">
+              <label class="layui-form-label">房间公告</label>
+              <div class="layui-input-block">
+                <textarea name="roompub" placeholder="请输入公告" class="layui-textarea">{{ d.data.roompub }}</textarea>
+              </div>
+              </div>
+              <div class="layui-form-item">
+              <label class="layui-form-label">推流地址</label>
+              <div class="layui-input-block">
+                <input type="text" name="roomurl" value="{{ d.data.roomurl }}"readonly autocomplete="off" class="layui-input">
+              </div>
+              </div>
+              <div class="layui-form-item">
+              <label class="layui-form-label">直播码</label>
+              <div class="layui-input-inline">
+                <input type="text" name="roomurl" value="{{ d.data.roomstream }}"readonly autocomplete="off" class="layui-input">
+              </div>
+              <div class="layui-form-mid layui-word-aux"><a href="#" id="resetstream" onclick="resetstream();">重置直播码</a></div>
+
+              </div>
+
+
+              <div class="layui-form-item">
+              <label class="layui-form-label">特殊荣誉</label>
+              <div class="layui-input-inline">
+                <input type="text" name="roomaward" value="
+                {{#if(d.data.roomaward==null){ }}
+                  无
+                  {{#} else{ }}
+                  {{ d.data.roomaward }}
+                  {{#} }}
+                "readonly autocomplete="off" class="layui-input">
+              </div>
+              <div class="layui-form-mid layui-word-aux">特殊荣誉将显示在房间主页上</div>
+              </div>
+
+
+              <div class="layui-form-item">
+              <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="setliveinfo">确认修改</button>
+              </div>
+              </div>
+
+
+            </script>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+  layui.data.done = function(d){
+  layui.use(['form'], function(){
+    var form = layui.form;
+     form.render(null, 'LAY-filter-info-form'); //渲染该模板下的动态表单
+  });
+};
+
+
+layui.use(['admin', 'form', 'user'], function(){
+  var $ = layui.$
+  ,setter = layui.setter
+  ,admin = layui.admin
+  ,form = layui.form
+  ,router = layui.router()
+  ,search = router.search;
+
+  form.render();
+
+  form.on('switch(liveswitch)', function(data){
+    //  layer.tips('开关checked：'+ (this.checked ? 'true' : 'false'), data.othis)
+      //请求接口
+      admin.req({
+        url: '/api/setlivestatus' //实际使用请改成服务端真实接口
+        ,done: function(res){
+          layer.tips(res['msg'], data.othis)
+
+
+        }
+
+      });
+
+
+
+    });
+
+  //提交
+  form.on('submit(setliveinfo)', function(obj){
+
+    //请求接口
+    admin.req({
+      url: '/api/setlive' //实际使用请改成服务端真实接口
+      ,data: obj.field
+      ,done: function(res){
+
+        //请求成功的提示与跳转
+        layer.msg(res['msg'], {
+          offset: '15px'
+          ,icon: 0
+          ,time: 1000
+        }, function(){
+
+          if(res['data'].feedback==1){
+
+            location.hash = search.redirect ? decodeURIComponent(search.redirect) : '/user/livesetting';
+          }
+          else {
+
+          }
+        });
+      }
+      ,success: function(res){
+        if(res['code']==1001)
+        {
+          layer.msg(res['msg'], {
+            offset: '15px'
+            ,icon: 5
+            ,time: 1000
+          });
+        }
+      }
+    });
+  });
+
+  window.resetstream = function(){
+    //请求登入接口
+    admin.req({
+      url: '/api/resetstream' //实际使用请改成服务端真实接口
+
+      ,done: function(res){
+
+
+        //请求成功的提示与跳转
+        layer.msg(res['msg'], {
+          offset: '15px'
+          ,icon: 0
+          ,time: 2000
+        }, function(){
+          if(res['data'].feedback==1){
+
+            location.hash = search.redirect ? decodeURIComponent(search.redirect) : '/user/livesetting';
+          }
+        });
+      }
+      ,success: function(res){
+        if(res['code']==1001)
+        {
+          layer.msg(res['msg'], {
+            offset: '15px'
+            ,icon: 5
+            ,time: 1000
+          });
+        }
+      }
+    });
+
+  }
+
+
+});
+</script>

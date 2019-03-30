@@ -1,0 +1,133 @@
+
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md8">
+      <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+
+
+
+          <div class="layui-card">
+            <div class="layui-card-header">
+              信息状态
+            <i class="layui-icon layui-icon-tips" lay-tips="个人信息状态" lay-offset="5"></i>
+          </div>
+            <div class="layui-card-body layui-text">
+              <script type="text/html" template lay-url="/api/info" >
+              <table class="layui-table">
+                <colgroup>
+                  <col width="100">
+                  <col>
+                </colgroup>
+                <tbody>
+                  <tr>
+                    <td>账号状态</td>
+                    <td>
+                      {{#if(d.data.usersta==1){ }}
+                      <span class="layui-badge layui-bg-green">正常</span>
+                      {{#} else if(d.data.usersta==2){ }}
+                      <span class="layui-badge layui-bg-orange">审核中</span>
+                      {{#} else if(d.data.usersta==3){ }}
+                      <span class="layui-badge layui-bg-gray">禁言中</span>
+                      {{#} else if(d.data.usersta==4){ }}
+                      <span class="layui-badge layui-bg-cyan">已锁定</span>
+                      {{#} else { }}
+                      <span class="layui-badge layui-bg-black">已封停</span>
+                      {{#} }}
+                   </td>
+                  </tr>
+                  <tr>
+                    <td>会员状态</td>
+                    <td>
+                      <span class="layui-badge">VIP{{d.data.viplevel}}</span>&nbsp;{{d.data.MP}}积分
+                   </td>
+                  </tr>
+                  <tr>
+                    <td>账户余额</td>
+                    <td>
+                      {{d.data.balance}}元 <a href="#" >充值</a>
+                   </td>
+                  </tr>
+                  <tr>
+                    <td>手机号码</td>
+                    <td>
+                      {{#if(d.data.mobile_check==1){ }}
+                      已绑定&nbsp;({{d.data.mobile}}) <a lay-href="/set/user/mobile" >修改绑定</a>
+                      {{#} else{ }}
+                      未绑定 <a lay-href="/set/user/mobile" >绑定号码</a>
+                      {{#} }}
+                   </td>
+                  </tr>
+                  <tr>
+                    <td>邮箱</td>
+                    <td>
+                      {{#if(d.data.email_check==1){ }}
+                      已验证&nbsp;({{d.data.email}}) <a lay-href="/set/user/email" >修改邮箱</a>
+                      {{#} else{ }}
+                      未验证&nbsp; <a lay-href="/set/user/info" >前往验证</a>
+                      {{#} }}
+                   </td>
+                  </tr>
+                </tbody>
+              </table>
+              </script>
+            </div>
+          </div>
+
+
+
+
+
+        </div>
+      </div>
+    </div>
+
+    <div class="layui-col-md4">
+
+      <div class="layui-card">
+        <div class="layui-card-header">
+          NumbCube在线观影
+          <i class="layui-icon layui-icon-tips" lay-tips="感谢您的关注!" lay-offset="5"></i>
+        </div>
+        <div class="layui-card-body layui-text layadmin-text">
+          NumbCube目前仍处在试运营阶段，有任何Bug请发送邮件至kiros@onbeta.com进行反馈，感谢您的关注。<br>
+
+
+        </div>
+      </div>
+
+
+
+    </div>
+  </div>
+
+</div>
+
+
+<script>
+layui.data.done = function(d){
+  layui.use(['form'], function(){
+    var form = layui.form;
+     form.render(null, 'LAY-filter-updating'); //渲染该模板下的动态表单
+  });
+};
+
+layui.use(['admin', 'table', 'user'], function(){
+  var $ = layui.$
+  ,setter = layui.setter
+  ,admin = layui.admin
+  ,form = layui.form
+  ,table = layui.table
+  ,router = layui.router()
+  ,search = router.search;
+
+  table.render();
+
+
+
+});
+
+
+
+layui.use('console', layui.factory('console'));
+</script>

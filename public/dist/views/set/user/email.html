@@ -1,0 +1,113 @@
+<title>修改我的邮箱</title>
+
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-header">邮箱</div>
+        <div class="layui-card-body" pad15>
+
+          <div class="layui-form" lay-filter="">
+
+            <div class="layui-form-item">
+              <label class="layui-form-label">邮箱</label>
+              <div class="layui-input-inline">
+                <input type="text" name="email" id="LAY-user-login-email" lay-verify="email" placeholder="邮箱" class="layui-input">
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="setemail">确认修改</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+//layui.use('set', layui.factory('set'));
+layui.use(['admin', 'form', 'user'], function(){
+  var $ = layui.$
+  ,setter = layui.setter
+  ,admin = layui.admin
+  ,form = layui.form
+  ,router = layui.router()
+  ,search = router.search;
+
+  form.render();
+
+
+  //提交
+  form.on('submit(setemail)', function(obj){
+
+    //请求登入接口
+    admin.req({
+      url: '/api/setemail' //实际使用请改成服务端真实接口
+      ,data: obj.field
+      ,done: function(res){
+/*
+        //登入成功的提示与跳转
+        layer.msg(res['msg'], {
+          offset: '15px'
+          ,icon: 0
+          ,time: 1000
+        }, function(){
+          if(res['data'].stats=="OK")
+          location.hash = search.redirect ? decodeURIComponent(search.redirect) : '/';
+        });
+        */
+      }
+      ,success: function(res){
+        if(res['code']==0)
+        {
+          if(res['data'].stats=="0")
+          {
+            layer.msg(res['msg'], {
+              offset: '15px'
+              ,icon: 1
+              ,time: 1000
+            }, function(){
+              location.hash = search.redirect ? decodeURIComponent(search.redirect) : '/';
+            });
+          }
+          if(res['data'].stats=="1")
+          {
+            layer.msg(res['msg'], {
+              offset: '15px'
+              ,icon: 2
+              ,time: 1000
+            });
+          }
+          if(res['data'].stats=="2")
+          {
+            layer.msg(res['msg'], {
+              offset: '15px'
+              ,icon: 2
+              ,time: 1000
+            });
+          }
+
+        }
+
+        if(res['code']==1001)
+        {
+          layer.msg(res['msg'], {
+            offset: '15px'
+            ,icon: 5
+            ,time: 1000
+          });
+        }
+      }
+
+
+    });
+
+  });
+
+
+
+});
+</script>

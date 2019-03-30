@@ -1,0 +1,138 @@
+<title>修改我的手机号码</title>
+
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-header">手机号码</div>
+        <div class="layui-card-body" pad15>
+
+          <div class="layui-form" lay-filter="">
+
+            <div class="layui-form-item">
+              <label class="layui-form-label">手机号码</label>
+              <div class="layui-input-inline">
+                <input type="text" name="cellphone" id="LAY-user-login-cellphone" lay-verify="phone" placeholder="手机" class="layui-input">
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">验证码</label>
+              <div class="layui-input-inline">
+                <input type="text" name="vercode" id="LAY-user-login-vercode" lay-verify="required" placeholder="验证码" class="layui-input">
+              </div>
+
+
+
+
+            </div>
+
+            <div class="layui-form-item">
+              <div class="layui-input-block">
+                <button type="button" class="layui-btn layui-btn-primary" id="LAY-user-reg-getsmscode">获取验证码</button>
+                <button class="layui-btn" lay-submit lay-filter="setmobile">确认修改</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+//layui.use('set', layui.factory('set'));
+layui.use(['admin', 'form', 'user'], function(){
+  var $ = layui.$
+  ,setter = layui.setter
+  ,admin = layui.admin
+  ,form = layui.form
+  ,router = layui.router()
+  ,search = router.search;
+
+  form.render();
+
+  //发送短信验证码
+  admin.sendAuthCode({
+    elem: '#LAY-user-reg-getsmscode'
+    ,elemPhone: '#LAY-user-login-cellphone'
+    ,elemVercode: '#LAY-user-login-vercode'
+    ,ajax: {
+      url: '/api/sendsms' //实际使用请改成服务端真实接口
+    }
+
+
+
+
+  });
+
+  //提交
+  form.on('submit(setmobile)', function(obj){
+
+    //请求登入接口
+    admin.req({
+      url: '/api/setmobile' //实际使用请改成服务端真实接口
+      ,data: obj.field
+      ,done: function(res){
+/*
+        //登入成功的提示与跳转
+        layer.msg(res['msg'], {
+          offset: '15px'
+          ,icon: 0
+          ,time: 1000
+        }, function(){
+          if(res['data'].stats=="OK")
+          location.hash = search.redirect ? decodeURIComponent(search.redirect) : '/';
+        });
+        */
+      }
+      ,success: function(res){
+        if(res['code']==0)
+        {
+          if(res['data'].stats=="0")
+          {
+            layer.msg(res['msg'], {
+              offset: '15px'
+              ,icon: 1
+              ,time: 1000
+            }, function(){
+              location.hash = search.redirect ? decodeURIComponent(search.redirect) : '/';
+            });
+          }
+          if(res['data'].stats=="1")
+          {
+            layer.msg(res['msg'], {
+              offset: '15px'
+              ,icon: 2
+              ,time: 1000
+            });
+          }
+          if(res['data'].stats=="2")
+          {
+            layer.msg(res['msg'], {
+              offset: '15px'
+              ,icon: 2
+              ,time: 1000
+            });
+          }
+
+        }
+
+        if(res['code']==1001)
+        {
+          layer.msg(res['msg'], {
+            offset: '15px'
+            ,icon: 5
+            ,time: 1000
+          });
+        }
+      }
+
+
+    });
+
+  });
+
+
+
+});
+</script>

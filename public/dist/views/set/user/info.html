@@ -1,0 +1,179 @@
+
+<title>设置我的资料</title>
+
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-header">设置我的资料</div>
+        <div class="layui-card-body" pad15>
+
+          <div class="layui-form" lay-filter="LAY-filter-info-form">
+            <script type="text/html" template lay-url="/api/info" lay-done="layui.data.done(d);">
+            <div class="layui-form-item">
+              <label class="layui-form-label">我的角色</label>
+              <div class="layui-input-inline">
+                <select name="role" lay-verify="">
+                  <option value="1" selected>用户</option>
+                  <option value="2" disabled>管理员</option>
+                </select>
+              </div>
+              <div class="layui-form-mid layui-word-aux">无法修改</div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">用户名</label>
+              <div class="layui-input-inline">
+                <input type="text" name="username" value="{{ d.data.username }}" readonly class="layui-input">
+              </div>
+              <div class="layui-form-mid layui-word-aux">无法修改</div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">性别</label>
+              <div class="layui-input-block">
+                <input type="radio" name="sex" value="男" title="男"{{# if(d.data.sex=="男"){}}checked{{#} }}>
+                <input type="radio" name="sex" value="女" title="女"{{# if(d.data.sex=="女"){}}checked{{#} }}>
+                <input type="radio" name="sex" value="保密" title="保密"{{# if(d.data.sex!="女"&&d.data.sex!="男"){}}checked{{#} }}>
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">手机</label>
+              <div class="layui-input-inline">
+                <input type="text" name="cellphone" value="{{ d.data.mobile }}" readonly lay-verify="phone" autocomplete="off" class="layui-input">
+              </div>
+              <div class="layui-form-mid layui-word-aux">
+                {{#if(d.data.mobile_check==0){ }}
+                <a lay-href="/set/user/mobile">绑定</a>
+                {{#} else{ }}
+                <a lay-href="/set/user/mobile">更改绑定</a>
+                {{#} }}
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">邮箱</label>
+              <div class="layui-input-inline">
+                <input type="text" name="email" value="{{ d.data.email }}" readonly lay-verify="email" autocomplete="off" class="layui-input">
+              </div>
+              <div class="layui-form-mid layui-word-aux">
+                <a lay-href="/set/user/email">更改邮箱</a>
+                {{#if(d.data.email_check==0){ }}
+                (未验证)
+                {{#}else{ }}
+                (已验证)
+                {{#} }}
+
+              </div>
+            </div>
+            <div class="layui-form-item layui-form-text">
+              <label class="layui-form-label">备注</label>
+              <div class="layui-input-block">
+                <textarea name="remarks" placeholder="请输入内容" class="layui-textarea">{{ d.data.remark }}</textarea>
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <div class="layui-input-block">
+                {{#if(d.data.email_check==0){ }}
+                <button type="reset" class="layui-btn layui-btn-primary" lay-submit lay-filter="sendemail">重新发送验证邮件</button>
+                {{#} }}
+                <button class="layui-btn" lay-submit lay-filter="setmyinfo">确认修改</button>
+              </div>
+            </div>
+            </script>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+  layui.data.done = function(d){
+  layui.use(['form'], function(){
+    var form = layui.form;
+     form.render(null, 'LAY-filter-info-form'); //渲染该模板下的动态表单
+  });
+};
+
+
+layui.use(['admin', 'form', 'user'], function(){
+  var $ = layui.$
+  ,setter = layui.setter
+  ,admin = layui.admin
+  ,form = layui.form
+  ,router = layui.router()
+  ,search = router.search;
+
+  form.render();
+
+
+
+  //提交
+  form.on('submit(setmyinfo)', function(obj){
+
+    //请求登入接口
+    admin.req({
+      url: '/api/setinfo' //实际使用请改成服务端真实接口
+      ,data: obj.field
+      ,done: function(res){
+
+
+        //请求成功的提示与跳转
+        layer.msg(res['msg'], {
+          offset: '15px'
+          ,icon: 1
+          ,time: 1000
+        }, function(){
+          location.hash = search.redirect ? decodeURIComponent(search.redirect) : '/';
+        });
+      }
+      ,success: function(res){
+        if(res['code']==1001)
+        {
+          layer.msg(res['msg'], {
+            offset: '15px'
+            ,icon: 5
+            ,time: 1000
+          });
+        }
+      }
+    });
+  });
+
+  //发验证邮件
+  form.on('submit(sendemail)', function(obj){
+
+    //请求登入接口
+    admin.req({
+      url: '/api/sendemail' //实际使用请改成服务端真实接口
+      ,data: obj.field
+      ,done: function(res){
+
+
+        //请求成功的提示与跳转
+        layer.msg(res['msg'], {
+          offset: '15px'
+          ,icon: 1
+          ,time: 1000
+        }, function(){
+          location.hash = search.redirect ? decodeURIComponent(search.redirect) : '/';
+        });
+      }
+      ,success: function(res){
+        if(res['code']==1001)
+        {
+          layer.msg(res['msg'], {
+            offset: '15px'
+            ,icon: 5
+            ,time: 1000
+          });
+        }
+      }
+
+
+    });
+
+  });
+
+});
+</script>

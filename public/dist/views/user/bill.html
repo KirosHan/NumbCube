@@ -1,0 +1,111 @@
+
+<title>财务中心</title>
+
+<div class="layui-card layadmin-header">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a lay-href="">主页</a>
+    <a><cite>财务中心</cite></a>
+  </div>
+</div>
+
+<div class="layui-fluid">
+<div class="layui-card">
+  <div class="layui-card-header">
+    财务状况
+  <i class="layui-icon layui-icon-tips" lay-tips="财务状况" lay-offset="5"></i>
+</div>
+  <div class="layui-card-body layui-text">
+    <script type="text/html" template lay-url="/api/info" >
+    <table class="layui-table">
+      <colgroup>
+        <col width="100">
+        <col>
+      </colgroup>
+      <tbody>
+          <td>账户余额</td>
+          <td>
+            {{d.data.balance}}元
+         </td>
+        </tr>
+        <tr>
+          <td>积分</td>
+          <td>
+            {{d.data.MP}}积分
+         </td>
+        </tr>
+        <tr>
+          <td>操作</td>
+          <td>
+            <a href="#" class="layui-btn layui-btn-normal">充值余额</a>
+
+         </td>
+        </tr>
+      </tbody>
+    </table>
+    </script>
+  </div>
+</div>
+
+
+</div>
+
+<div class="layui-fluid" id="LAY-app-message">
+  <div class="layui-card">
+    <div class="layui-card-header">
+      财务记录
+    <i class="layui-icon layui-icon-tips" lay-tips="财务记录" lay-offset="5"></i>
+    </div>
+      <div class="layui-tab-content">
+        <div class="layui-tab-item layui-show">
+
+
+
+          <table id="LAY-app-bill" lay-filter="LAY-app-bill" lay-even	lay-size="sm"></table>
+        </div>
+
+      </div>
+    </div>
+
+</div>
+
+<script>
+layui.use(['admin', 'table', 'util'], function(){
+  var $ = layui.$
+  ,admin = layui.admin
+  ,table = layui.table
+  ,element = layui.element;
+
+
+  var DISABLED = 'layui-btn-disabled'
+
+  //区分各选项卡中的表格
+  ,tabs = {
+    notice: {
+      text: '清单'
+      ,id: 'LAY-app-bill'
+    }
+  };
+
+
+
+
+
+  //清单
+  table.render({
+    elem: '#LAY-app-bill'
+    ,url: '/api/bill' //模拟接口
+    ,where: {access_token: layui.data('layuiAdmin').access_token}
+    ,page: true
+    ,cols: [[
+      {field: 'time', title: '时间', Width: 50, templet: '<div>{{ d.time}}</div>'}
+      ,{field: 'change', title: '余额变更', Width: 20, templet: '<div>{{ d.change }}</div>'}
+      ,{field: 'title', title: '详情', width: 220, templet: '<div>{{ d.title }}</div>'}
+
+    ]]
+    ,skin: 'row'
+  });
+
+
+
+});
+</script>

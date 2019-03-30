@@ -1,0 +1,190 @@
+
+<script type="text/html" template>
+  <link rel="stylesheet" href="{{ layui.setter.base }}style/login.css?v={{ layui.admin.v }}-1" media="all">
+</script>
+
+
+<div class="layadmin-user-login layadmin-user-display-show" id="LAY-user-login" style="display: none;">
+  <div class="layadmin-user-login-main">
+    <div class="layadmin-user-login-box layadmin-user-login-header">
+      <h2>NumbCube观影中心</h2>
+      <p>Owned By Onsigma</p>
+    </div>
+    <div class="layadmin-user-login-box layadmin-user-login-body layui-form">
+      <div class="layui-form-item">
+        <label class="layadmin-user-login-icon layui-icon layui-icon-username" for="LAY-user-login-nickname"></label>
+        <input type="text" name="nickname" id="LAY-user-login-nickname" lay-verify="username" placeholder="用户名" class="layui-input">
+      </div>
+      <div class="layui-form-item">
+        <label class="layadmin-user-login-icon layui-icon layui-icon-password" for="LAY-user-login-password"></label>
+        <input type="password" name="password" id="LAY-user-login-password" lay-verify="pass" placeholder="密码" class="layui-input">
+      </div>
+      <div class="layui-form-item">
+        <label class="layadmin-user-login-icon layui-icon layui-icon-password" for="LAY-user-login-repass"></label>
+        <input type="password" name="repass" id="LAY-user-login-repass" lay-verify="repass" placeholder="确认密码" class="layui-input">
+      </div>
+      <div class="layui-form-item">
+        <label class="layadmin-user-login-icon layui-icon layui-icon-template" for="LAY-user-login-email"></label>
+        <input type="text" name="email" id="LAY-user-login-email" lay-verify="email" placeholder="邮箱" class="layui-input">
+      </div>
+      <div class="layui-form-item">
+        <label class="layadmin-user-login-icon layui-icon layui-icon-cellphone" for="LAY-user-login-cellphone"></label>
+        <input type="text" name="cellphone" id="LAY-user-login-cellphone" lay-verify="phone" placeholder="手机号" class="layui-input">
+      </div>
+      <div class="layui-form-item">
+        <div class="layui-row">
+          <div class="layui-col-xs7">
+            <label class="layadmin-user-login-icon layui-icon layui-icon-vercode" for="LAY-user-login-vercode"></label>
+            <input type="text" name="vercode" id="LAY-user-login-vercode" lay-verify="required" placeholder="验证码" class="layui-input">
+          </div>
+          <div class="layui-col-xs5">
+            <div style="margin-left: 10px;">
+              <button type="button" class="layui-btn layui-btn-primary layui-btn-fluid" id="LAY-user-reg-getsmscode">获取验证码</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <input type="checkbox" name="agreement" lay-skin="primary" title="同意用户协议" checked>
+        <a class="layadmin-user-jump-change layadmin-link" data-method="notice" lay-filter="LAY-user-reg-proto" style="margin-top: 7px;cursor:pointer;">阅读《服务条款和版权声明》</a>
+      </div>
+      <div class="layui-form-item">
+        <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="LAY-user-reg-submit">注 册</button>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="layui-trans layadmin-user-login-footer">
+
+    <p>© 2018 <a href="http://www.onsigma.com/" target="_blank">onsigma.com</a></p>
+
+  </div>
+
+</div>
+
+<script>
+layui.use(['admin', 'form', 'user'], function(){
+  var $ = layui.$
+  ,setter = layui.setter
+  ,admin = layui.admin
+  ,form = layui.form
+  ,router = layui.router()
+  ,search = router.search;
+
+  form.render();
+
+  form.verify({
+  username: [/[A-Za-z0-9]{4,18}$/, '用户名不能包含特殊字符且为4-18位']
+
+  //我们既支持上述函数式的方式，也支持下述数组的形式
+  //数组的两个值分别代表：[正则匹配、匹配不符时的提示文字]
+  ,pass: [
+    /^[\S]{6,20}$/
+    ,'密码必须6到20位，且不能出现空格'
+  ]
+});
+
+var active = {
+notice: function(){
+    layer.closeAll();
+    layer.open({
+      type: 1
+      ,title: 'ONSIGMA服务条款及版权声明'
+      ,closeBtn: false
+      ,area: '800px;'
+      ,shade: 0.8
+      ,id: 'LAY_layuipro'
+      ,btn: ['我已了解']
+      ,btnAlign: 'c'
+      ,moveType: 1 //拖拽模式，0或者1
+      ,content: '<div style="padding: 50px; line-height: 22px; background-color: #393D49; color: #fff; font-weight: 300;">生效日期：2018年5月20日</br>欢迎光临 ！</br></br></div>'
+
+    });
+  }
+};
+
+  //发送短信验证码
+  admin.sendAuthCode({
+    elem: '#LAY-user-reg-getsmscode'
+    ,elemPhone: '#LAY-user-login-cellphone'
+    ,elemVercode: '#LAY-user-login-vercode'
+    ,ajax: {
+      url: '/api/sendregsms' //实际使用请改成服务端真实接口
+    }
+  });
+
+
+  //提交
+  form.on('submit(LAY-user-reg-submit)', function(obj){
+    var field = obj.field;
+
+    //确认密码
+    if(field.password !== field.repass){
+      return layer.msg('两次密码输入不一致');
+    }
+
+    //是否同意用户协议
+    if(!field.agreement){
+      return layer.msg('你必须同意服务条款才能注册');
+    }
+
+    //请求接口
+    admin.req({
+      url: '/api/userreg' //实际使用请改成服务端真实接口
+      ,data: field
+      ,done: function(res){
+      }
+      ,success: function(res){
+        console.log(res['data']);
+        if(res['code']==0)
+        {
+          if(res['data'].stats=="0")
+          {
+            layer.msg(res['msg'], {
+              offset: '15px'
+              ,icon: 1
+              ,time: 1000
+            }, function(){
+              location.hash = search.redirect ? decodeURIComponent(search.redirect) : '/';
+            });
+          }
+          if(res['data'].stats=="1")
+          {
+            layer.msg(res['msg'], {
+              offset: '15px'
+              ,icon: 2
+              ,time: 1000
+            });
+          }
+          if(res['data'].stats=="2")
+          {
+            layer.msg(res['msg'], {
+              offset: '15px'
+              ,icon: 2
+              ,time: 1000
+            });
+          }
+
+        }
+
+        if(res['code']==1001)
+        {
+          layer.msg(res['msg'], {
+            offset: '15px'
+            ,icon: 5
+            ,time: 1000
+          });
+        }
+      }
+    });
+
+    return false;
+  });
+
+  $('.layadmin-link').on('click', function(){
+    var othis = $(this), method = othis.data('method');
+    active[method] ? active[method].call(this, othis) : '';
+  });
+});
+</script>

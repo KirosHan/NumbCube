@@ -1,0 +1,129 @@
+
+<title>申请直播间</title>
+
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-header">申请直播间</div>
+        <div class="layui-card-body" pad15>
+
+          <div class="layui-form" lay-filter="LAY-filter-info-form">
+            <script type="text/html" template lay-url="/api/liveapplyinfo" lay-done="layui.data.done(d);">
+              {{#if(d.data.status=='未申请'){ }}
+              <div class="layui-form-item">
+                <div class="layui-elem-quote">
+                  <p>仅一次机会提交申请，请仔细核对后提交</p>
+                </div>
+              </div>
+              {{#} }}
+            <div class="layui-form-item">
+              <label class="layui-form-label">状态</label>
+              <div class="layui-input-inline">
+                <input type="text" name="status" value="{{ d.data.status }}" readonly class="layui-input">
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">姓名</label>
+              <div class="layui-input-inline">
+                {{#if(d.data.status=='未申请'){ }}
+                <input type="text" name="name" value="{{ d.data.name }}" lay-verify="required" autocomplete="off" class="layui-input">
+                {{#} else{ }}
+                <input type="text" name="name" value="{{ d.data.name }}" readonly lay-verify="required" autocomplete="off" class="layui-input">
+                {{#} }}
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">身份证号</label>
+              <div class="layui-input-inline">
+                {{#if(d.data.status=='未申请'){ }}
+                <input type="text" name="idcard" value="{{ d.data.id }}" lay-verify="identity" autocomplete="off" class="layui-input">
+                {{#} else{ }}
+                <input type="text" name="idcard" value="{{ d.data.id }}" readonly lay-verify="identity" autocomplete="off" class="layui-input">
+                {{#} }}
+              </div>
+
+            </div>
+
+            {{#if(d.data.status=='未申请'){ }}
+            <div class="layui-form-item">
+              <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="setmyinfo">提交申请</button>
+              </div>
+            </div>
+            {{#} }}
+
+            </script>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+  layui.data.done = function(d){
+  layui.use(['form'], function(){
+    var form = layui.form;
+     form.render(null, 'LAY-filter-info-form'); //渲染该模板下的动态表单
+  });
+};
+
+
+layui.use(['admin', 'form', 'user'], function(){
+  var $ = layui.$
+  ,setter = layui.setter
+  ,admin = layui.admin
+  ,form = layui.form
+  ,router = layui.router()
+  ,search = router.search;
+
+  form.render();
+
+
+
+  //提交
+  form.on('submit(setmyinfo)', function(obj){
+
+    //请求登入接口
+    admin.req({
+      url: '/api/liveapply' //实际使用请改成服务端真实接口
+      ,data: obj.field
+      ,done: function(res){
+
+
+        //请求成功的提示与跳转
+        layer.msg(res['msg'], {
+          offset: '15px'
+          ,icon: 0
+          ,time: 1000
+        }, function(){
+
+          if(res['data'].feedback==1){
+
+            location.hash = search.redirect ? decodeURIComponent(search.redirect) : '/';
+          }
+          else {
+
+          }
+        });
+      }
+      ,success: function(res){
+        if(res['code']==1001)
+        {
+          layer.msg(res['msg'], {
+            offset: '15px'
+            ,icon: 5
+            ,time: 1000
+          });
+        }
+      }
+    });
+  });
+
+
+
+});
+</script>
