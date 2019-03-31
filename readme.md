@@ -37,6 +37,9 @@ Numbcube这个项目经历了几次重生，最初开始于2015年，当时的�
 5. 短信模块配置：如果你使用阿里云短信服务，那么只需要修改`\config\alisms.php`和`\vendor\hyperbolaa⁩\alisms⁩\src⁩\config⁩config.php⁩`(不太记得这个需不需要改了)里面对应的信息就行了
 6. 邮件模块配置：如果你用mailgun的话只需要修改(如没有请添加).env中的MAILGUN_SECRET`MAILGUN_DOMAIN=mail.onsigma.com
 MAILGUN_SECRET=key-8d37afc543b18f5a1111111111111111`
+7. (附加工具)一键推流工具Numbcube-pusher：本repository带了一个编译好的完整程序，如果你想重新编译请前往[NumbCube-pusher](https://github.com/KirosHan/NumbCube-pusher)
+
+P.S.本系统默认管理员账号Kiros，密码123456
 P.S.本系统所以模块可独立运行，不一定要安装在同一服务器上，只要保证互相之间http和rtmp通信成功即可，原系统运行于2台主机上。
 
 # 流程描述
