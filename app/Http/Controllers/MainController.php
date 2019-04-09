@@ -176,7 +176,7 @@ class MainController extends Controller
             }
             $ipc = 'unknown';
             $myip =  preg_match ( '/[\d\.]{7,15}/', $ip, $matches ) ? $matches [0] : '';
-            $url = 'http://api.map.baidu.com/location/ip?ak=XFB2jjQw7st9Qejn3VhmWBSYM9mfoZ1l&ip='.$myip;
+            $url = 'http://api.map.baidu.com/location/ip?ak=百度地图接口AK&ip='.$myip;
 
 
             $ch = curl_init();
