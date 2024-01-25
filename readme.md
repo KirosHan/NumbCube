@@ -1,6 +1,5 @@
 # 关于Numbcube 
-[![LICENSE](https://img.shields.io/badge/license-Anti%20996-blue.svg)](https://github.com/996icu/996.ICU/blob/master/LICENSE) 
-[![996.icu](https://img.shields.io/badge/link-996.icu-red.svg)](https://996.icu)
+早就不维护了。来这里立个墓碑🪦
 
 Numbcube是一个集放映、互动、直播一体的综合系统，原本是小群体互动娱乐使用，后来不断附加需求，使得本系统不断完善，功能不断增加，越来越趋近于商业化模式，不再适用于朋友间的娱乐，所以已停止使用并把它开源出来，希望给有类似需求的朋友提供些思路。整个项目比较繁杂，使用的语言也较多，希望各位朋友包含。
 
